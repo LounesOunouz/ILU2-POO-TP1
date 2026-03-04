@@ -69,7 +69,7 @@ public class Village {
 		}
 
 		private void utiliserEtal(int indiceEtal, Gaulois vendeur, String produit, int nbProduit) {
-			etals[indiceEtal].occuperEtal(vendeur, produit, nbProduit);
+			etals[indiceEtal - 1].occuperEtal(vendeur, produit, nbProduit);
 		}
 
 		private int trouverEtalLibre() {
@@ -79,7 +79,7 @@ public class Village {
 					retour = i;
 				}
 			}
-			return retour;
+			return retour + 1;
 		}
 
 		private Etal[] trouverEtals(String produit) {
@@ -124,7 +124,6 @@ public class Village {
 			}
 			return s;
 
-//			return "OMG";
 		}
 	}
 
@@ -136,9 +135,85 @@ public class Village {
 		chaine.append(nbProduit);
 		chaine.append(" ");
 		chaine.append(produit);
+		chaine.append("\nLe vendeur ");
+		chaine.append(vendeur.getNom());
+		chaine.append(" vend des fleurs à l'étal n: ");
+		chaine.append(marche.trouverEtalLibre());
+		chaine.append("\n");
+//		marchse.trouverEtalLibre();
+		marche.utiliserEtal(marche.trouverEtalLibre(), vendeur, produit, nbProduit);
+//		chaine.append("\nL'étal libre maintenet est : ");
+//		chaine.append(marche.trouverEtalLibre());
 
 		return chaine.toString();
 
+	}
+
+	public String rechercherVendeursProduit(String produit) {
+		StringBuilder chaine = new StringBuilder();
+		Etal[] etal = marche.trouverEtals(produit);
+		if (etal.length > 1) {
+
+			chaine.append("Les vendeurs qui proposent des ");
+			chaine.append(produit);
+			chaine.append(" sont :");
+			for (int i = 0; i < etal.length; i++) {
+				chaine.append("\n-");
+				chaine.append((etal[i].getVendeur()).getNom());
+			}
+
+		}
+		if (etal.length == 1) {
+			chaine.append("Seul le vendeur ");
+			chaine.append(etal[0].getVendeur().getNom());
+			chaine.append(" propose des ");
+			chaine.append(produit);
+			chaine.append(" au marché\n");
+		}
+		if (etal.length <= 0) {
+			chaine.append("Il n'y a pas de vendeur qui propose des ");
+			chaine.append(produit);
+			chaine.append(" au marché.\n");
+		}
+
+		return chaine.toString();
+	}
+
+	public Etal rechercherEtal(Gaulois vendeur) {
+		Etal etal = new Etal();
+		for (int i = 0; i < marche.etals.length; i++) {
+			if (marche.etals[i].getVendeur() == vendeur) {
+				etal = marche.etals[i];
+			}
+		}
+
+		return etal;
+	}
+
+	public String partirVendeur(Gaulois vendeur) {
+		StringBuilder chaine = new StringBuilder();
+		for (int i = 0; i < marche.etals.length; i++) {
+			if (marche.etals[i].getVendeur() == vendeur) {
+				chaine.append(marche.etals[i].libererEtal());
+			}
+		}
+
+		return chaine.toString();
+	}
+
+	public String afficherMarche() {
+		StringBuilder chaine = new StringBuilder();
+		chaine.append("Le marché du village " + getNom() + "possède plusieurs étals: \n");
+		for (int i = 0; i < marche.etals.length - 1; i++) {
+			chaine.append("\n" + (marche.etals[i].getVendeur()).getNom());
+			chaine.append(" vend");
+
+			chaine.append(marche.etals[i].getQuantite() + " ");
+			chaine.append(marche.etals[i].getProduit() + "\n");
+		}
+		chaine.append(marche.afficherMarche());
+
+		return chaine.toString();
 	}
 
 }
